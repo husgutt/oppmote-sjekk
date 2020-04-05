@@ -1,1 +1,32 @@
-<p>oppmote-skjema works!</p>
+<div class="container">
+    <h1>Oppmøteskjema!</h1>
+        <div class="form-group">
+            <input class="form-control" type='date' [(ngModel)]='skjema.dato' />
+
+            <select class="custom-select" [(ngModel)]='skjema.event'>
+                <option value="trening">Trening</option>
+                <option value="kamp">Kamp</option>
+            </select>
+
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Navn</th>
+                    <th scope="col">Alder</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr [style]='color(i)' *ngFor="let elev of skjema.elever; let i = index" (click)='isPresentClick(i)'>        
+                    <th scope="row">{{i + 1}}</th>
+                    <td>{{elev.name}}</td>
+                    <td>{{elev.age}}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+    <button class="btn btn-primary" (click) = 'saveSkjema()'>Lagre</button>
+</div>
+
+{{ skjema | json }}
