@@ -1,3 +1,19 @@
-<os-oppmote-skjema>
+<ul class="nav justify-content-center">
+    <li class="nav-item">
+      <a class="nav-link active" [routerLink]="['/velkommen']">Hovedside</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" [routerLink]="['/opprett-ny', dagensDato ]">Nytt Skjema</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" [routerLink]="['/skjemaer']">Link</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" [routerLink]="['/elever']">Elever</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" [routerLink]="['/ny-elev']">Ny elev</a>
+    </li>
+  </ul>
 
-</os-oppmote-skjema>
+<router-outlet></router-outlet>

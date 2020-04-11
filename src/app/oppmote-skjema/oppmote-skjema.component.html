@@ -1,7 +1,7 @@
 <div class="container">
     <h1>Oppmøteskjema!</h1>
-        <div class="form-group">
-            <input class="form-control" type='date' [(ngModel)]='skjema.dato' />
+        <div class="form-group" *ngIf='!tidligereSkjemaEksister; else else2'>
+            <input class="form-control" type='date' [(ngModel)]='skjema.dato' (input) = 'test()'/>
 
             <select class="custom-select" [(ngModel)]='skjema.event'>
                 <option value="trening">Trening</option>
@@ -12,21 +12,26 @@
                 <thead>
                 <tr>
                     <th scope="col">#</th>
-                    <th scope="col">Navn</th>
+                    <th scope="col">Fornavn</th>
+                    <th scope="col">Etternavn</th>
                     <th scope="col">Alder</th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr [style]='color(i)' *ngFor="let elev of skjema.elever; let i = index" (click)='isPresentClick(i)'>        
+                <tr [style]='color(i)' *ngFor="let elev of elever; let i = index" (click)='isPresentClick(i)'>        
                     <th scope="row">{{i + 1}}</th>
-                    <td>{{elev.name}}</td>
+                    <td>{{elev.firstname}}</td>
+                    <td>{{elev.lastname}}</td>
                     <td>{{elev.age}}</td>
                 </tr>
                 </tbody>
             </table>
         </div>
 
-    <button class="btn btn-primary" (click) = 'saveSkjema()'>Lagre</button>
-</div>
+        <ng-template #else2>
+            <h2>Hei, Skjema eksisterer ikke. Vil du lage for i dag?</h2>
+            <button class="btn btn-danger">Opprett nytt skjema</button>
+        </ng-template>
 
-{{ skjema | json }}
+        {{skjema | json}}
+</div>

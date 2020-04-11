@@ -1,5 +1,6 @@
 export interface Elev {
-    name: string;
+    id : string;
+    firstname: string;
+    lastname: string;
     age: number;
-    present: boolean;
 }
