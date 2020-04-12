@@ -15,6 +15,7 @@ import { VelkommenComponent } from './velkommen/velkommen.component';
 import { EleverComponent } from './elever/elever.component';
 import { ElevComponent } from './elev/elev.component';
 import { NyElevComponent } from './ny-elev/ny-elev.component';
+import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
   declarations: [
@@ -27,6 +28,7 @@ import { NyElevComponent } from './ny-elev/ny-elev.component';
     NyElevComponent
   ],
   imports: [
+    NgbModule,
     AngularFireModule.initializeApp(environment.firebase),
     AngularFirestoreModule,
     BrowserModule,
@@ -44,7 +46,7 @@ import { NyElevComponent } from './ny-elev/ny-elev.component';
       { path: 'opprett-ny', component: OppmoteSkjemaComponent},
       { path: '**-ny', component: VelkommenComponent}
       
-    ])
+    ]),
   ],
   providers: [],
   bootstrap: [AppComponent]

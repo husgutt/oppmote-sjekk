@@ -1,37 +1,41 @@
 <div class="container">
     <h1>Oppmøteskjema!</h1>
-        <div class="form-group" *ngIf='!tidligereSkjemaEksister; else else2'>
-            <input class="form-control" type='date' [(ngModel)]='skjema.dato' (input) = 'test()'/>
+        <div class="form-group">
+            <input class="form-control" type='date' [(ngModel)]='skjema.dato' (input) = 'byttDato()'/>
+            <div *ngIf='valgtSkjemaEksisterer; else opprettNytt'>             
+                <select class="custom-select" [(ngModel)]='skjema.event'>
+                    <option value="trening">Trening</option>
+                    <option value="kamp">Kamp</option>
+                </select>
 
-            <select class="custom-select" [(ngModel)]='skjema.event'>
-                <option value="trening">Trening</option>
-                <option value="kamp">Kamp</option>
-            </select>
+                <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Fornavn</th>
+                        <th scope="col">Etternavn</th>
+                        <th scope="col">Alder</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr [style]='color(i)' *ngFor="let elev of skjema.elever; let i = index" (click)='isPresentClick(i)'>        
+                        <th scope="row">{{i + 1}}</th>
+                        <td>{{elev.firstname}}</td>
+                        <td>{{elev.lastname}}</td>
+                        <td>{{elev.age}}</td>
+                    </tr>
+                    </tbody>
+                </table>
 
-            <table class="table table-hover">
-                <thead>
-                <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Fornavn</th>
-                    <th scope="col">Etternavn</th>
-                    <th scope="col">Alder</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr [style]='color(i)' *ngFor="let elev of elever; let i = index" (click)='isPresentClick(i)'>        
-                    <th scope="row">{{i + 1}}</th>
-                    <td>{{elev.firstname}}</td>
-                    <td>{{elev.lastname}}</td>
-                    <td>{{elev.age}}</td>
-                </tr>
-                </tbody>
-            </table>
+                <button class="btn btn-danger" (click)="slettSkjema()" >Slett skjema</button>
+            </div>
+
+
+            <ng-template #opprettNytt>
+                <h2>Hei, Skjema eksisterer ikke. Vil du lage for i dag?</h2>
+                <button class="btn btn-primary" (click)='opprettNyttSkjema()'>Opprett nytt skjema</button>
+            </ng-template>
         </div>
 
-        <ng-template #else2>
-            <h2>Hei, Skjema eksisterer ikke. Vil du lage for i dag?</h2>
-            <button class="btn btn-danger">Opprett nytt skjema</button>
-        </ng-template>
 
-        {{skjema | json}}
 </div>

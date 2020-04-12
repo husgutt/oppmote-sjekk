@@ -17,119 +17,121 @@ export class OppmoteSkjemaComponent implements OnInit {
 
 
   skjema : Skjema;
-  
-  currentSkjemaDoc : AngularFirestoreDocument<Skjema>;
-  currentElever : Observable<Elev[]>;
-  elever : Elev[];
-  currentDate : string;
-  currentId : string;
-  tidligereSkjemaEksister: boolean = false;
-  dagensSkjema : boolean = false;
-  presentArray : boolean[] = [];
-  
-  constructor(private firestore: AngularFirestore, private route: ActivatedRoute, private router: Router, private toolservice : ToolsService){}
+  observableSkjema : Observable<Skjema[]>;
+  observableElever : Observable<Elev[]>;
+  valgtSkjemaEksisterer : boolean;
+  tempDato : string;
+   
 
-  ngOnInit(): void {
-
-    this.initiateSkjema();
-    this.currentId = this.route.snapshot.paramMap.get('id');
-
-    if(!this.currentId) {
-      console.log("ingen idparameter, viser dagens")
-      this.currentDate = this.dateFormat();
-      this.dagensSkjema = true;
-      console.log(this.skjema)
-    }
-    // else {
-    //   this.currentSkjemaDoc = this.firestore.doc(this.currentId);
-    //   this.currentSkjemaDoc.valueChanges().subscribe({
-    //     next: skjema => {
-    //       if(skjema){
-    //         this.skjema = skjema
-    //         this.tidligereSkjemaEksister = true;
-    //       }
-    //       else {
-    //         console.log("Skjema eksisterer ikke fra før av")
-    //         this.currentElever = this.firestore.collection<Elev>("elev").valueChanges();
-    //         this.currentElever.subscribe({
-    //           next: elever => {this.elever = elever;            
-    //           this.skjema = this.opprettNyttSkjema();
-    //           this.currentSkjemaDoc.set(this.skjema);}
-    //         });
-    //       }
-    //     }
-    //   });
-    // }
-  }
-
-  // opprettNyttSkjema() : Skjema {
-
-  //   return  {
-  //     dato : this.currentDate,
-  //     elever : this.elever,
-  //     event : "trening"
-  //   }
-
-  // }
- 
-  color(i : number) : string {
-    // if(!this.skjema.elever[i].present)
-    // {
-    //   return "background-color: red;" ;
-    // }
-    // else {
-    //     return "background-color: green;";
-    // }
-
-    return "background-color: green;";
-  }
-
-  isPresentClick(i : number) : void {
-    // this.skjema.elever[i].present = !this.skjema.elever[i].present;
-    this.saveSkjema();
-  }
-
-  dateFormat() : string {
-    return new Date().toISOString().slice(0,10);
-  }
-  
-  saveSkjema() : void {
-    this.currentSkjemaDoc.update(this.skjema)
-  }
-
-  printSkjema() : void {
-  }
-
-  test() : void {
-    this.currentDate = this.skjema.dato;
-    this.ngOnInit()
-    this.router.navigate(['/opprett-ny', this.skjema.dato])
-  }
-
-  initiateSkjema() : void {
+  constructor(private firestore: AngularFirestore, private route: ActivatedRoute, private router: Router, private toolservice : ToolsService){
     this.skjema = {
-      id: "1",
-      dato : this.currentDate,
-      elever : [],
-      present:[],
+      id : "0",
+      dato : "dato",
+      elever : [], 
+      present :[],
       event : "trening"
     }
   }
 
-  opprettDagensSkjema() : void {
+  ngOnInit(): void {
 
-    let returSkjema : Skjema;
+    let parameterDato = this.route.snapshot.paramMap.get('id')
+    this.valgtSkjemaEksisterer = false;
 
-    this.currentElever = this.firestore.collection<Elev>("elev").valueChanges();
-    this.currentElever.subscribe({
-      next: elever => {
-        this.elever = elever;
-        console.log(elever)
-        for (let index = 0; index < elever.length; index++) {
-          this.presentArray[index] = false; 
+    //Sjekk om det er en spesiell dato som er valgt    
+    if(parameterDato){
+      console.log("parameterDato er: " + parameterDato + " <--- ");
+      this.skjema.dato = parameterDato;
+      
+      // Dato er valgt
+      // TODO: Sjekke om dato er gyldig. Hvis ugyldig sendes til startside eller noe
+      // Prøv å hente dokument på denne datoen
+      this.sjekkeOmSkjemaSkalOpprettes(parameterDato);
+
+    }
+    else {
+      console.log("Dato er ikke valgt, setter dato til dagens");
+      // Dato er ikke valgt, setter dato til dagens
+      this.skjema.dato = this.toolservice.dateFormat();
+      this.sjekkeOmSkjemaSkalOpprettes(this.toolservice.dateFormat());
+    }
+  }
+
+  color(i : number) : string {
+    if(!this.skjema.present[i])
+    {
+      return "background-color: red;" ;
+    }
+    else {
+        return "background-color: green;";
+    }
+  }
+
+  isPresentClick(i : number) : void {
+    this.skjema.present[i] = !this.skjema.present[i];
+    this.toolservice.oppdatereSkjema(this.skjema);
+  }
+
+  byttDato() : void {
+    this.router.navigate(['/opprett-ny', this.skjema.dato])
+    this.sjekkeOmSkjemaSkalOpprettes( this.skjema.dato);  
+  }
+
+  sjekkeOmSkjemaSkalOpprettes(dato : string) : void {
+    this.observableSkjema = this.toolservice.hentSkjemaPaDato(dato);
+    this.observableSkjema.subscribe({
+      next : skjemaer => {
+        if(skjemaer.length > 0 )
+        {
+          //Treff
+          this.skjema = skjemaer[0];
+          this.valgtSkjemaEksisterer = true;
         }
-        this.currentId = this.toolservice.opprettId();
+        else{
+          //Spørre om å opprette nytt skjema til valgt dato
+          this.valgtSkjemaEksisterer = false;
+          this.tempDato = dato;
+        }
       }
-    });
+    })
+  }
+
+  slettSkjema() : void {
+    this.toolservice.slettSkjema(this.skjema);
+  }
+
+  opprettNyttSkjema() : void{
+
+    let lokalId : string;
+    let lokalDato : string;
+    let lokalElever : Elev[];
+    let lokalPresent : boolean[] = [];
+    let lokalEvent : string;
+
+    this.observableElever = this.toolservice.hentAlleElever();
+    this.observableElever.subscribe({
+      next : elever => {
+        lokalElever = elever;
+        for (let index = 0; index < elever.length; index++) {
+          lokalPresent[index] = false;          
+        }
+        lokalEvent = 'trening';
+        lokalDato = this.tempDato;
+        lokalId = this.toolservice.opprettId();
+
+        this.skjema = {
+          id : lokalId,
+          dato : lokalDato,
+          elever : lokalElever,
+          present : lokalPresent,
+          event : lokalEvent
+        }
+
+        this.valgtSkjemaEksisterer = true;
+
+        this.toolservice.lagreSkjema(this.skjema);       
+
+      }
+    })
   }
 }
