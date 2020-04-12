@@ -1,0 +1,19 @@
+<h1>Elever!</h1>
+<table class="table table-hover">
+    <thead>
+    <tr>
+        <th scope="col">#</th>
+        <th scope="col">Fornavn</th>
+        <th scope="col">Etternavn</th>
+        <th scope="col">Alder</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr  *ngFor="let elev of elever; let i = index" [routerLink]="['/ny-elev', elev.id]">
+            <th scope="row">{{i + 1}}</th>
+            <td>{{elev.firstname}}</td>
+            <td>{{elev.lastname}}</td>
+            <td>{{elev.age}}</td>
+    </tr>
+    </tbody>
+</table>

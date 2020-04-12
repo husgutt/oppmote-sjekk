@@ -1,0 +1,19 @@
+<div class="container">
+    <h1>Liste over skjemaer</h1>
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Dato</th>
+            <th scope="col">Type</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let skjema of skjemaListeObs | async"  [routerLink]="['/opprett-ny', skjema.dato]">        
+            <th scope="row">{{1}}</th>
+            <td>{{skjema.dato}}</td>
+            <td>{{skjema.event}}</td>
+        </tr>
+        </tbody>
+    </table>
+</div>

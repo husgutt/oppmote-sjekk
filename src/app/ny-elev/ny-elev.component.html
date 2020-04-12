@@ -1,0 +1,20 @@
+<div class="container">
+    <form>
+        <div class="form-group" >
+
+            <label for="firstname">firstname</label>
+            <input class="form-control" type="text" name="firstname" id="firstname" [(ngModel)]='currentElev.firstname' required>
+
+            <label for="lastname">lastname</label>
+            <input class="form-control" type="text" name="lastname" id="lastname" [(ngModel)]='currentElev.lastname' required>
+
+            <label for="age">Age</label>
+            <input class="form-control" type="number" name="age" id="age" [(ngModel)]='currentElev.age' required>
+
+            <button class="btn btn-primary" (click) = 'lagreElev()'>Lagre</button>
+            <button *ngIf='eksistererFraForAv' class="btn btn-danger" (click) = 'slettElev()'>Slett elev</button>
+        </div>
+    </form>
+
+</div>
+
