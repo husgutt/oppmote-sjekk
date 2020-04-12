@@ -60,10 +60,10 @@ export class OppmoteSkjemaComponent implements OnInit {
   color(i : number) : string {
     if(!this.skjema.present[i])
     {
-      return "background-color: red;" ;
+      return "p-3 mb-2 bg-success text-white" ;
     }
     else {
-        return "background-color: green;";
+        return "p-3 mb-2 bg-danger text-white";
     }
   }
 
